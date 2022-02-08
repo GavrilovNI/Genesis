@@ -7,22 +7,23 @@ using System.Threading.Tasks;
 
 namespace Genesis.BotGeneCommands
 {
-    public class Move : RelationCommand
+    public class Mutate : BotGeneCommand
     {
+        public const int MUTATION_COUNT = 2;
+
         public override bool IsFinal => true;
 
-        public Move(bool relative) : base(relative)
+        public override void Apply(Bot bot)
         {
-        }
+            for (int i = 0; i < MUTATION_COUNT; i++)
+                bot.Mutate();
 
-        public override void Apply(Bot bot, EntityType entityType, Vector2Int lookPosition)
-        {
-            bot.TryMove(lookPosition);
+            bot.MoveCommand(1);
         }
 
         public override int GetCode()
         {
-            return Relative ? 26 : 27;
+            return 48;
         }
     }
 }

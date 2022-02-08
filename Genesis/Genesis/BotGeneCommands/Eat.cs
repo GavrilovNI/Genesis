@@ -11,6 +11,8 @@ namespace Genesis.BotGeneCommands
     {
         public const int ENERGY_TO_EAT = 4;
 
+        public override bool IsFinal => true;
+
         public Eat(bool relative) : base(relative)
         {
         }
@@ -21,8 +23,7 @@ namespace Genesis.BotGeneCommands
             if (entityType == EntityType.Organic)
             {
                 Organic organic = (Organic)bot.Map!.GetEntity(lookPosition);
-                bot.AddEnergy(organic.GetEnergy());
-                organic.Kill();
+                bot.EatOrganic(organic);
             }
             else if(entityType == EntityType.Bot)
             {

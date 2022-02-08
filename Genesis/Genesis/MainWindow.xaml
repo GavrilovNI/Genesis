@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Genesis"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
-        <Image Name="ImageViewer1" Height="390" Width="750"/>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Height="21" Margin="10,10,0,0" VerticalAlignment="Top" Width="52"/>
+        <Image Name="ImageViewer1" Height="430" Width="750" Margin="25,41,25,13"/>
+        <Slider x:Name="speedSlider" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Width="380" Value="1" Minimum="0" Maximum="500"/>
+        <Label x:Name="label" Content="Speed:" Margin="10,5,718,400"/>
+        <Label x:Name="speedLabel" Content="1" HorizontalAlignment="Left" Margin="443,5,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

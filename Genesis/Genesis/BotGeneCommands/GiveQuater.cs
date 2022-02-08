@@ -9,7 +9,7 @@ namespace Genesis.BotGeneCommands
 {
     public class GiveQuater : RelationCommand
     {
-        public const int ENERGY_TO_EAT = 4;
+        public override bool IsFinal => false;
 
         public GiveQuater(bool relative) : base(relative)
         {

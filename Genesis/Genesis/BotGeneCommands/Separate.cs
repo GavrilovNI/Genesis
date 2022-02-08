@@ -9,9 +9,12 @@ namespace Genesis.BotGeneCommands
 {
     public class Separate : BotGeneCommand
     {
+        public override bool IsFinal => true;
+
         public override void Apply(Bot bot)
         {
             bot.Separate();
+            bot.MoveCommand(1);
         }
 
         public override int GetCode()

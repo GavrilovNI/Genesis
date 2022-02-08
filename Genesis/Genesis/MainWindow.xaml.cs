@@ -25,6 +25,8 @@ namespace Genesis
         private Map _map;
         private Vector2Int imageSize;
 
+        private int _speed = 1;
+
         int RGBToInt(int r, int g, int b)
         {
             int colorData = r << 16; // R
@@ -96,7 +98,19 @@ namespace Genesis
                         switch (entity.Value.Type)
                         {
                             case EntityType.Bot:
-                                color = RGBToInt(0, 255, 0);
+                                Bot bot = (Bot)entity.Value;
+                                float max = MathF.Max(MathF.Max(bot.EnergyFromOrganic, bot.EnergyFromMinerals), bot.EnergyFromSun);
+                                if(max == 0)
+                                {
+                                    color = RGBToInt(0, 255, 0);
+                                }
+                                else
+                                {
+                                    int r = (int)(255f * bot.EnergyFromOrganic / max);
+                                    int g = (int)(255f * bot.EnergyFromSun / max);
+                                    int b = (int)(255f * bot.EnergyFromMinerals / max);
+                                    color = RGBToInt(r, g, b);
+                                }
                                 break;
                             case EntityType.Wall:
                                 color = RGBToInt(255, 0, 0);
@@ -141,23 +155,35 @@ namespace Genesis
 
         public MainWindow()
         {
-            _map = new Map(new Vector2Int(180, 96));
+            //int randomSeed = 100;
 
-            Bot firstBot = new Bot(_map, 10, false);
+            _map = new Map(new Vector2Int(180, 96), new Random());
+
+            Bot firstBot = new Bot(_map, 10);
             firstBot.Direction = BotDirection.Down;
             _map.AddEntity(new Vector2Int(_map.Size.X / 2, 0), firstBot);
 
             InitializeComponent();
+
+            RoutedPropertyChangedEventHandler<double> sliderValuerChanged = (object sender, RoutedPropertyChangedEventArgs<double> e) =>
+            {
+                int value = (int)e.NewValue;
+                speedSlider.Value = value;
+                speedLabel.Content = value.ToString();
+                _speed = value;
+            };
+            sliderValuerChanged.Invoke(null, new RoutedPropertyChangedEventArgs<double>(speedSlider.Value, _speed));
+            speedSlider.ValueChanged += sliderValuerChanged;
 
             imageSize = new Vector2Int((int)ImageViewer1.Width, (int)ImageViewer1.Height);
 
             DrawMap();
 
             _timer = new Timer(1); //Updates every quarter second.
-            _timer.Elapsed += (object source, ElapsedEventArgs e) =>
+            _timer.Elapsed += (object? source, ElapsedEventArgs e) =>
             {
                 _timer.Enabled = false;
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < _speed; i++)
                     _map.DoIteration();
                 DrawMapInOtherThread();
                 _timer.Enabled = true;

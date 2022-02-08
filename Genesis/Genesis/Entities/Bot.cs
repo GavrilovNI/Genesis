@@ -17,6 +17,7 @@ namespace Genesis.Entities
         public const int MINERAL_TO_ENERGY_MULTIPLIER = 4;
         public const int ENERGY_FOR_ONE_ITERATION = 3;
         public const float MUTATION_CHANCE = 0.5f;
+        public const int MAX_COMMANDS_IN_ITERATION = 15;
 
         private BotGeneCommand[] _gene;
 
@@ -55,34 +56,31 @@ namespace Genesis.Entities
             }
         }
 
+        public int EnergyFromSun { get; private set; }
+        public int EnergyFromOrganic { get; private set; }
+        public int EnergyFromMinerals { get; private set; }
+
         public int GeneSize => _gene.Length;
 
         public override EntityType Type => EntityType.Bot;
 
-        public Bot(Map map, int energy = 10, bool fillGeneRandom = false) : base(map)
+        public Bot(Map map, int energy = 10) : base(map)
         {
             if (energy < 0)
                 throw new ArgumentOutOfRangeException(nameof(energy));
 
 
             _gene = new BotGeneCommand[GENE_SIZE];
-            if(fillGeneRandom)
-            {
-                Random random = new Random();
-                for (int i = 0; i < _gene.Length; i++)
-                {
-                    _gene[i] = BotGeneCommand.GenerateCommand(random.Next(GeneSize));
-                }
-            }
-            else
-            {
-                Array.Fill(_gene, new Photosynthesis());
-            }
+            Array.Fill(_gene, new Photosynthesis());
             Direction = BotDirection.Up;
             CurrentCommand = 0;
 
             Energy = energy;
             Minerals = 0;
+
+            EnergyFromSun = 0;
+            EnergyFromOrganic = 0;
+            EnergyFromMinerals = 0;
         }
 
         public Bot(Bot other) : base(other.Map!)
@@ -93,30 +91,50 @@ namespace Genesis.Entities
             CurrentCommand = other.CurrentCommand;
             Energy = other.Energy;
             Minerals = other.Minerals;
+
+            EnergyFromSun = 0;
+            EnergyFromOrganic = 0;
+            EnergyFromMinerals = 0;
         }
 
         public void DoIteration()
         {
-            if (IsAlive == false)
-                return;
-            Energy -= ENERGY_FOR_ONE_ITERATION;
-            if(Energy <= 0)
+            for (int i = 0; i < MAX_COMMANDS_IN_ITERATION; i++)
             {
-                Kill();
-                return;
-            }
-            Minerals += Map!.GetMinerals(Position);
-            _gene[CurrentCommand].Apply(this);
+                if (IsAlive == false)
+                {
+                    return;
+                }
+                Energy -= ENERGY_FOR_ONE_ITERATION;
+                if (Energy <= 0)
+                {
+                    Kill();
+                    return;
+                }
+                Minerals += Map!.GetMinerals(Position);
+                BotGeneCommand command = _gene[CurrentCommand];
+                command.Apply(this);
 
-            if(Energy == MaxEnergy)
-                Separate();
+                if (Energy == MaxEnergy)
+                {
+                    Separate();
+                    return;
+                }
+
+                if (command.IsFinal)
+                {
+                    return;
+                }
+            }
         }
 
         public void Photosynthesis()
         {
             if (IsAlive == false)
                 return;
-            AddEnergy(Map!.GetSunEnergy(Position));
+            int energyToAdd = Map!.GetSunEnergy(Position);
+            AddEnergy(energyToAdd);
+            EnergyFromSun += energyToAdd;
         }
         
         public void ConvertMinerals()
@@ -127,6 +145,7 @@ namespace Genesis.Entities
 
             Minerals -= mineralToConvert;
             Energy += mineralToConvert * MINERAL_TO_ENERGY_MULTIPLIER;
+            EnergyFromMinerals += mineralToConvert; // I would add mineralToConvert * MINERAL_TO_ENERGY_MULTIPLIER 
         }
 
         public bool TryMove(Vector2Int position)
@@ -163,8 +182,10 @@ namespace Genesis.Entities
             if(Minerals >= other.Minerals)
             {
                 Minerals -= other.Minerals;
-                Energy += FIGHT_BONUS + other.Energy / 2;
+                int energyToAdd = FIGHT_BONUS + other.Energy / 2;
+                Energy += energyToAdd;
                 other.Kill();
+                EnergyFromOrganic += energyToAdd;
             }
             else
             {
@@ -172,10 +193,12 @@ namespace Genesis.Entities
                 other.Minerals -= Minerals;
                 if(Energy >= 2 * other.Minerals)
                 {
-                    Energy += FIGHT_BONUS + other.Energy / 2 - 2 * other.Minerals;
+                    int energyToAdd = FIGHT_BONUS + other.Energy / 2 - 2 * other.Minerals;
+                    Energy += energyToAdd;
                     other.Minerals = 0;
                     other.Energy = 0;
                     other.Kill();
+                    EnergyFromOrganic += energyToAdd;
                 }
                 else
                 {
@@ -184,6 +207,23 @@ namespace Genesis.Entities
                     Kill();
                 }
             }
+        }
+
+        public void EatOrganic(Organic organic)
+        {
+            AddEnergy(organic.GetEnergy());
+            organic.Kill();
+        }
+
+        public void Mutate()
+        {
+            if (IsAlive == false)
+                return;
+
+            int mutationPos = Map!.Random.Next(0, _gene.Length);
+            int commandCode = Map!.Random.Next(0, _gene.Length);
+            BotGeneCommand newCommand = BotGeneCommand.GenerateCommand(commandCode);
+            _gene[mutationPos] = newCommand;
         }
 
         public Bot? Separate()
@@ -213,18 +253,11 @@ namespace Genesis.Entities
             newBot.Minerals = Minerals / 2;
             Minerals -= newBot.Minerals;
 
-            newBot.Direction = (BotDirection)new Random(BotDirectionExtensions.GetDirectionsCount()).Next();
+            newBot.Direction = (BotDirection)Map.Random.Next(BotDirectionExtensions.GetDirectionsCount());
 
-            Random random = new Random();
-            if(random.NextSingle() < MUTATION_CHANCE)
+            if(Map.Random.NextSingle() < MUTATION_CHANCE)
             {
-                int goodMutationChanceMplier = 10;
-                int mutationPos = random.Next(0, _gene.Length);
-                int commandCode = random.Next(0, _gene.Length + 25 * goodMutationChanceMplier);
-                if (goodMutationChanceMplier !=0 && commandCode > _gene.Length)
-                    commandCode =  23 + (commandCode - _gene.Length) / goodMutationChanceMplier;
-                BotGeneCommand newCommand = BotGeneCommand.GenerateCommand(commandCode);
-                _gene[mutationPos] = newCommand;
+                newBot.Mutate();
             }
             return newBot;
         }

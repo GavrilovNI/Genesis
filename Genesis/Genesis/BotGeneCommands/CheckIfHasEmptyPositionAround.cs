@@ -9,6 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class CheckIfHasEmptyPositionAround : BotGeneCommand
     {
+        public override bool IsFinal => false;
+
         public override void Apply(Bot bot)
         {
             bool hasEmptyPosition = bot.Map!.GetEmptyPositionAroundPosition(bot.Position) != null;
@@ -16,11 +18,11 @@ namespace Genesis.BotGeneCommands
             int commandMoveDelta;
             if (hasEmptyPosition)
             {
-                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 1).GetCode();
+                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 2).GetCode();
             }
             else
             {
-                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 2).GetCode();
+                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 1).GetCode();
             }
             bot.MoveCommand(commandMoveDelta);
         }

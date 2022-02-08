@@ -9,6 +9,7 @@ namespace Genesis.BotGeneCommands
 {
     public class Photosynthesis : BotGeneCommand
     {
+        public override bool IsFinal => true;
 
         public override void Apply(Bot bot)
         {

@@ -9,12 +9,14 @@ namespace Genesis.BotGeneCommands
 {
     public class CheckIfCanGetMinerals : BotGeneCommand
     {
+        public override bool IsFinal => false;
+
         public override void Apply(Bot bot)
         {
-            bool canDoPhotosynthesis = bot.Map!.GetMinerals(bot.Position) > 0;
+            bool canGetMinerals = bot.Map!.GetMinerals(bot.Position) > 0;
 
             int commandMoveDelta;
-            if (canDoPhotosynthesis)
+            if (canGetMinerals)
             {
                 commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 1).GetCode();
             }

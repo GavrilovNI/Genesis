@@ -9,6 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class CheckIfCanDoPhotosynthesis : BotGeneCommand
     {
+        public override bool IsFinal => false;
+
         public override void Apply(Bot bot)
         {
             bool canDoPhotosynthesis = bot.Map!.GetSunEnergy(bot.Position) > 0;

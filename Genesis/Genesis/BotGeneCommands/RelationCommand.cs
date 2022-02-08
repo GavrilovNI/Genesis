@@ -21,7 +21,8 @@ namespace Genesis.BotGeneCommands
 
             EntityType entityType = bot.Map!.GetEntityType(lookPosition);
             Apply(bot, entityType, lookPosition);
-            bot.MoveCommand((int)entityType);
+
+            bot.MoveCommand(bot.GetCommand(bot.CurrentCommand + (int)entityType + 2).GetCode());
         }
 
         public abstract void Apply(Bot bot, EntityType entityType, Vector2Int lookPosition);

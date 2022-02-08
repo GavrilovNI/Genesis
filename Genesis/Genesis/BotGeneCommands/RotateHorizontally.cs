@@ -9,9 +9,11 @@ namespace Genesis.BotGeneCommands
 {
     public class RotateHorizontally : BotGeneCommand
     {
+        public override bool IsFinal => false;
+
         public override void Apply(Bot bot)
         {
-            Random random = new Random();
+            Random random = bot.Map!.Random;
             if (random.NextSingle() < 0.5f)
                 bot.Direction = BotDirection.Right;
             else

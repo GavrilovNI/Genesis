@@ -9,6 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class ConvertMinerals : BotGeneCommand
     {
+        public override bool IsFinal => true;
+
         public override void Apply(Bot bot)
         {
             bot.ConvertMinerals();

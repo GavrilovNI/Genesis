@@ -9,6 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class CommandMover : BotGeneCommand
     {
+        public override bool IsFinal => false;
+
         private int _delta;
 
         public CommandMover(int delta)

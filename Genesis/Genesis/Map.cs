@@ -26,7 +26,9 @@ namespace Genesis
 
         private int _iteration;
 
-        public Map(Vector2Int size)
+        public Random Random { get; private set; }
+
+        public Map(Vector2Int size, Random random)
         {
             if (size.X <= 0 || size.Y <= 0)
                 throw new ArgumentException(nameof(size) + " must be more than (0; 0).");
@@ -36,6 +38,7 @@ namespace Genesis
             Size = size;
             Season = Season.Summer;
             _iteration = 0;
+            Random = random;
         }
 
         public Entity GetEntity(Vector2Int position)
@@ -118,13 +121,6 @@ namespace Genesis
                     position.X += Size.X;
             }
 
-            if (position.Y < 0 || position.Y >= Size.Y)
-            {
-                position.Y %= Size.Y;
-                if (position.Y < 0)
-                    position.Y += Size.Y;
-            }
-
             return position;
         }
 
@@ -186,12 +182,12 @@ namespace Genesis
             int count = 3;
             int one = Size.Y / 2 / count;
 
-            int minDepth = one * count;
+            int minDepth = Size.Y / 2;
 
             if (position.Y < minDepth)
                 return 0;
 
-            int result = (int)(((position.Y - minDepth) / (Size.Y - minDepth)) * count);
+            int result = (int)(( MathF.Ceiling(1f * (position.Y - minDepth) / (Size.Y - minDepth) ) * count));
 
             return result;
         }

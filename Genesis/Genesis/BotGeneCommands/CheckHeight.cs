@@ -9,6 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class CheckHeight : BotGeneCommand
     {
+        public override bool IsFinal => false;
+
         public override void Apply(Bot bot)
         {
             float compareWith = 1f * bot.GetCommand(bot.CurrentCommand + 1).GetCode() * bot.Map!.Size.Y / bot.GeneSize;

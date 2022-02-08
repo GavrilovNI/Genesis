@@ -14,6 +14,8 @@ namespace Genesis.BotGeneCommands
         public abstract void Apply(Bot bot);
         public abstract int GetCode();
 
+        public abstract bool IsFinal { get; }
+
         public static BotGeneCommand GenerateCommand(int code)
         {
             switch(code)
@@ -66,6 +68,8 @@ namespace Genesis.BotGeneCommands
 
                 case 47:
                     return new ConvertMinerals();
+                case 48:
+                    return new Mutate();
 
                 default:
                     return new CommandMover(code);

@@ -9,6 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class Look : RelationCommand
     {
+        public override bool IsFinal => false;
+
         public Look(bool relative) : base(relative)
         {
         }
