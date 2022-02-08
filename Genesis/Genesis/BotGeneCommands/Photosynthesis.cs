@@ -10,16 +10,12 @@ namespace Genesis.BotGeneCommands
     public class Photosynthesis : BotGeneCommand
     {
         public override bool IsFinal => true;
+        public override int Code => 25;
 
         public override void Apply(Bot bot)
         {
             bot.Photosynthesis();
             bot.MoveCommand(1);
-        }
-
-        public override int GetCode()
-        {
-            return 25;
         }
     }
 }

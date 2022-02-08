@@ -11,10 +11,10 @@ namespace Genesis.BotGeneCommands
 
     public abstract class BotGeneCommand
     {
-        public abstract void Apply(Bot bot);
-        public abstract int GetCode();
-
         public abstract bool IsFinal { get; }
+        public abstract int Code { get; }
+
+        public abstract void Apply(Bot bot);
 
         public static BotGeneCommand GenerateCommand(int code)
         {
@@ -70,6 +70,9 @@ namespace Genesis.BotGeneCommands
                     return new ConvertMinerals();
                 case 48:
                     return new Mutate();
+
+                case 52:
+                    return new GeneAttack();
 
                 default:
                     return new CommandMover(code);

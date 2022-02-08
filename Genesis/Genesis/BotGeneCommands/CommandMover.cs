@@ -10,6 +10,7 @@ namespace Genesis.BotGeneCommands
     public class CommandMover : BotGeneCommand
     {
         public override bool IsFinal => false;
+        public override int Code => _delta;
 
         private int _delta;
 
@@ -24,11 +25,6 @@ namespace Genesis.BotGeneCommands
         public override void Apply(Bot bot)
         {
             bot.MoveCommand(_delta);
-        }
-
-        public override int GetCode()
-        {
-            return _delta;
         }
     }
 }

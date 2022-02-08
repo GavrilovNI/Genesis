@@ -10,6 +10,7 @@ namespace Genesis.BotGeneCommands
     public class Rotate : DirectionalCommand
     {
         public override bool IsFinal => false;
+        public override int Code => Relative ? 23 : 24;
 
         public Rotate(bool relative) : base(relative)
         {
@@ -20,11 +21,6 @@ namespace Genesis.BotGeneCommands
         {
             bot.Direction = direction;
             bot.MoveCommand(2);
-        }
-
-        public override int GetCode()
-        {
-            return Relative ? 23 : 24;
         }
     }
 }

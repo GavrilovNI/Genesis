@@ -12,6 +12,7 @@ namespace Genesis.BotGeneCommands
         public const int ENERGY_TO_EAT = 4;
 
         public override bool IsFinal => true;
+        public override int Code => Relative ? 30 : 31;
 
         public Eat(bool relative) : base(relative)
         {
@@ -20,6 +21,8 @@ namespace Genesis.BotGeneCommands
         public override void Apply(Bot bot, EntityType entityType, Vector2Int lookPosition)
         {
             bot.Energy -= ENERGY_TO_EAT;
+            if (bot.IsAlive == false)
+                return;
             if (entityType == EntityType.Organic)
             {
                 Organic organic = (Organic)bot.Map!.GetEntity(lookPosition);
@@ -30,11 +33,6 @@ namespace Genesis.BotGeneCommands
                 Bot other = (Bot)bot.Map!.GetEntity(lookPosition);
                 bot.Fight(other);
             }
-        }
-
-        public override int GetCode()
-        {
-            return Relative ? 30 : 31;
         }
     }
 }

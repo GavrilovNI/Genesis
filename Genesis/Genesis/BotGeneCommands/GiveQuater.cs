@@ -10,6 +10,7 @@ namespace Genesis.BotGeneCommands
     public class GiveQuater : RelationCommand
     {
         public override bool IsFinal => false;
+        public override int Code => Relative ? 34 : 35;
 
         public GiveQuater(bool relative) : base(relative)
         {
@@ -22,11 +23,6 @@ namespace Genesis.BotGeneCommands
                 Bot other = (Bot)bot.Map!.GetEntity(lookPosition);
                 bot.GiveQuater(other);
             }
-        }
-
-        public override int GetCode()
-        {
-            return Relative ? 34 : 35;
         }
     }
 }

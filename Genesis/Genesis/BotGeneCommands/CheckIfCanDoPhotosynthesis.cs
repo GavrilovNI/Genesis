@@ -10,6 +10,7 @@ namespace Genesis.BotGeneCommands
     public class CheckIfCanDoPhotosynthesis : BotGeneCommand
     {
         public override bool IsFinal => false;
+        public override int Code => 44;
 
         public override void Apply(Bot bot)
         {
@@ -18,18 +19,13 @@ namespace Genesis.BotGeneCommands
             int commandMoveDelta;
             if (canDoPhotosynthesis)
             {
-                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 1).GetCode();
+                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 1).Code;
             }
             else
             {
-                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 2).GetCode();
+                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 2).Code;
             }
             bot.MoveCommand(commandMoveDelta);
-        }
-
-        public override int GetCode()
-        {
-            return 44;
         }
     }
 }

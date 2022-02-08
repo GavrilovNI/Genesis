@@ -184,10 +184,10 @@ namespace Genesis
 
             int minDepth = Size.Y / 2;
 
-            if (position.Y < minDepth)
+            if (position.Y <= minDepth)
                 return 0;
 
-            int result = (int)(( MathF.Ceiling(1f * (position.Y - minDepth) / (Size.Y - minDepth) ) * count));
+            int result = (int)(( MathF.Ceiling(1f * (position.Y - minDepth) / (Size.Y - minDepth) * count)));
 
             return result;
         }

@@ -9,7 +9,8 @@ namespace Genesis.BotGeneCommands
 {
     public class Move : RelationCommand
     {
-        public override bool IsFinal => true;
+        public override bool IsFinal => false;
+        public override int Code => Relative ? 26 : 27;
 
         public Move(bool relative) : base(relative)
         {
@@ -18,11 +19,6 @@ namespace Genesis.BotGeneCommands
         public override void Apply(Bot bot, EntityType entityType, Vector2Int lookPosition)
         {
             bot.TryMove(lookPosition);
-        }
-
-        public override int GetCode()
-        {
-            return Relative ? 26 : 27;
         }
     }
 }

@@ -10,16 +10,12 @@ namespace Genesis.BotGeneCommands
     public class ConvertMinerals : BotGeneCommand
     {
         public override bool IsFinal => true;
+        public override int Code => 47;
 
         public override void Apply(Bot bot)
         {
             bot.ConvertMinerals();
             bot.MoveCommand(1);
-        }
-
-        public override int GetCode()
-        {
-            return 47;
         }
     }
 }

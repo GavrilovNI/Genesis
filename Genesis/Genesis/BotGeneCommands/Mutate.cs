@@ -12,6 +12,7 @@ namespace Genesis.BotGeneCommands
         public const int MUTATION_COUNT = 2;
 
         public override bool IsFinal => true;
+        public override int Code => 48;
 
         public override void Apply(Bot bot)
         {
@@ -19,11 +20,6 @@ namespace Genesis.BotGeneCommands
                 bot.Mutate();
 
             bot.MoveCommand(1);
-        }
-
-        public override int GetCode()
-        {
-            return 48;
         }
     }
 }

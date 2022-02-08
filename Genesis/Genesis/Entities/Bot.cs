@@ -13,6 +13,7 @@ namespace Genesis.Entities
         public const int GENE_SIZE = 64;
         public const int FIGHT_BONUS = 100;
         public const int ENERGY_TO_SEPARATE = 150;
+        public const int ENERGY_TO_GENE_ATTACK = 10;
         public const int MAX_MINERALS_TO_COVERT = 100;
         public const int MINERAL_TO_ENERGY_MULTIPLIER = 4;
         public const int ENERGY_FOR_ONE_ITERATION = 3;
@@ -41,6 +42,8 @@ namespace Genesis.Entities
                 if(value > MaxEnergy)
                     value = MaxEnergy;
                 _energy = value;
+                if (_energy <= 0)
+                    Kill();
             }
         }
         public int Minerals
@@ -101,14 +104,9 @@ namespace Genesis.Entities
         {
             for (int i = 0; i < MAX_COMMANDS_IN_ITERATION; i++)
             {
+                Energy -= ENERGY_FOR_ONE_ITERATION;
                 if (IsAlive == false)
                 {
-                    return;
-                }
-                Energy -= ENERGY_FOR_ONE_ITERATION;
-                if (Energy <= 0)
-                {
-                    Kill();
                     return;
                 }
                 Minerals += Map!.GetMinerals(Position);
@@ -141,11 +139,12 @@ namespace Genesis.Entities
         {
             if (IsAlive == false)
                 return;
-            int mineralToConvert = _minerals > MAX_MINERALS_TO_COVERT ? MAX_MINERALS_TO_COVERT : _minerals;
+            int mineralToConvert = (int)MathF.Min(_minerals, MAX_MINERALS_TO_COVERT);
 
             Minerals -= mineralToConvert;
-            Energy += mineralToConvert * MINERAL_TO_ENERGY_MULTIPLIER;
-            EnergyFromMinerals += mineralToConvert; // I would add mineralToConvert * MINERAL_TO_ENERGY_MULTIPLIER 
+            int energyToAdd = mineralToConvert * MINERAL_TO_ENERGY_MULTIPLIER;
+            Energy += energyToAdd;
+            EnergyFromMinerals += energyToAdd; // in original += mineralToConvert
         }
 
         public bool TryMove(Vector2Int position)
@@ -169,6 +168,14 @@ namespace Genesis.Entities
             Map map = Map!;
             base.Kill();
             map.AddEntity(position, new Organic(map));
+        }
+
+        public void GeneAttack(Bot other)
+        {
+            Energy -= ENERGY_TO_GENE_ATTACK;
+            if (IsAlive == false)
+                return;
+            other.Mutate();
         }
 
         public void Fight(Bot other)

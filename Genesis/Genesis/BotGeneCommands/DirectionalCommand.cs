@@ -27,7 +27,7 @@ namespace Genesis.BotGeneCommands
         public sealed override void Apply(Bot bot)
         {
             BotGeneCommand nextCommand = bot.GetCommand(bot.CurrentCommand + 1);
-            BotDirection direction = GetDirectionFromCode(nextCommand.GetCode(), bot);
+            BotDirection direction = GetDirectionFromCode(nextCommand.Code, bot);
             Apply(bot, direction);
         }
 

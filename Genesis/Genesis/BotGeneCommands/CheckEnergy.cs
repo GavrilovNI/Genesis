@@ -10,26 +10,22 @@ namespace Genesis.BotGeneCommands
     public class CheckEnergy : BotGeneCommand
     {
         public override bool IsFinal => false;
+        public override int Code => 38;
 
         public override void Apply(Bot bot)
         {
-            float compareWith = 1f * bot.GetCommand(bot.CurrentCommand + 1).GetCode() * bot.MaxEnergy / bot.GeneSize;
+            float compareWith = 1f * bot.GetCommand(bot.CurrentCommand + 1).Code * bot.MaxEnergy / bot.GeneSize;
 
             int commandMoveDelta;
             if (bot.Energy < compareWith)
             {
-                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 2).GetCode();
+                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 2).Code;
             }
             else
             {
-                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 3).GetCode();
+                commandMoveDelta = bot.GetCommand(bot.CurrentCommand + 3).Code;
             }
             bot.MoveCommand(commandMoveDelta);
-        }
-
-        public override int GetCode()
-        {
-            return 38;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Genesis.BotGeneCommands
     public class Look : RelationCommand
     {
         public override bool IsFinal => false;
+        public override int Code => Relative ? 30 : 31;
 
         public Look(bool relative) : base(relative)
         {
@@ -18,11 +19,6 @@ namespace Genesis.BotGeneCommands
         public override void Apply(Bot bot, EntityType entityType, Vector2Int lookPosition)
         {
             //doing nothing, just watching
-        }
-
-        public override int GetCode()
-        {
-            return Relative ? 30 : 31;
         }
     }
 }

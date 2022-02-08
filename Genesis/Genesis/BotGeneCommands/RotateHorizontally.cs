@@ -10,6 +10,7 @@ namespace Genesis.BotGeneCommands
     public class RotateHorizontally : BotGeneCommand
     {
         public override bool IsFinal => false;
+        public override int Code => 36;
 
         public override void Apply(Bot bot)
         {
@@ -19,11 +20,6 @@ namespace Genesis.BotGeneCommands
             else
                 bot.Direction = BotDirection.Left;
             bot.MoveCommand(1);
-        }
-
-        public override int GetCode()
-        {
-            return 36;
         }
     }
 }
