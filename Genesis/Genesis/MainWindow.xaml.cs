@@ -111,6 +111,11 @@ namespace Genesis
                                     int b = (int)(255f * bot.EnergyFromMinerals / max);
                                     color = RGBToInt(r, g, b);
                                 }
+                                //if(bot.IsMulticellular)
+                                //    color = RGBToInt(255, 0, 0);
+                                //else
+                                //    color = RGBToInt(0, 255, 0);
+
                                 break;
                             case EntityType.Wall:
                                 color = RGBToInt(255, 0, 0);

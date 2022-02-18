@@ -15,7 +15,7 @@ namespace Genesis.Entities
         public const int ENERGY_TO_SEPARATE = 150;
         public const int ENERGY_TO_GENE_ATTACK = 10;
         public const int MAX_MINERALS_TO_COVERT = 100;
-        public const int MINERAL_TO_ENERGY_MULTIPLIER = 3;
+        public const int MINERAL_TO_ENERGY_MULTIPLIER = 4;
         public const int ENERGY_FOR_ONE_ITERATION = 3;
         public const float MUTATION_CHANCE = 0.5f;
         public const int MAX_COMMANDS_IN_ITERATION = 15;
@@ -153,6 +153,8 @@ namespace Genesis.Entities
         public bool TryMove(Vector2Int position)
         {
             if (IsAlive == false)
+                return false;
+            if (IsMulticellular)
                 return false;
             if (Map!.GetEntityType(position) == EntityType.Void)
             {
