@@ -28,10 +28,10 @@ namespace Genesis
         };
         public Dictionary<Season, float> SeasonToSunEnergyMupltiplier = new Dictionary<Season, float>()
         {
-            { Season.Summer, 40 },
-            { Season.Fall, 38 },
-            { Season.Spring, 38 },
-            { Season.Winter, 35 },
+            { Season.Summer, 35 },
+            { Season.Fall, 33 },
+            { Season.Spring, 33 },
+            { Season.Winter, 31 },
         };
 
         private BidirectionalDictrionary<Vector2Int, Entity> _entities;
