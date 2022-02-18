@@ -55,7 +55,8 @@ namespace Genesis.BotGeneCommands
                 case 39:
                     return new CheckMinerals();
 
-
+                case 40:
+                    return new SeparateConnected();
                 case 41:
                     return new Separate();
 

@@ -26,9 +26,18 @@ namespace Genesis.Entities
         {
             if (IsAlive == false)
                 return;
-            Map!.RemoveEnt(this);
-            Map = null;
+            RemoveFromMap();
         }
 
+        protected Map? RemoveFromMap()
+        {
+            if (Map == null)
+                return null;
+
+            Map map = Map!;
+            Map!.RemoveEnt(this);
+            Map = null;
+            return map;
+        }
     }
 }

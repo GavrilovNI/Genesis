@@ -15,7 +15,7 @@ namespace Genesis.Entities
         public const int ENERGY_TO_SEPARATE = 150;
         public const int ENERGY_TO_GENE_ATTACK = 10;
         public const int MAX_MINERALS_TO_COVERT = 100;
-        public const int MINERAL_TO_ENERGY_MULTIPLIER = 4;
+        public const int MINERAL_TO_ENERGY_MULTIPLIER = 3;
         public const int ENERGY_FOR_ONE_ITERATION = 3;
         public const float MUTATION_CHANCE = 0.5f;
         public const int MAX_COMMANDS_IN_ITERATION = 15;
@@ -32,7 +32,7 @@ namespace Genesis.Entities
         public int MaxEnergy => 1000;
         public int MaxMinerals => 1000;
 
-        public int Energy
+        public virtual int Energy
         {
             get { return _energy; }
             set
@@ -46,7 +46,7 @@ namespace Genesis.Entities
                     Kill();
             }
         }
-        public int Minerals
+        public virtual int Minerals
         {
             get { return _minerals; }
             set
@@ -66,6 +66,9 @@ namespace Genesis.Entities
         public int GeneSize => _gene.Length;
 
         public override EntityType Type => EntityType.Bot;
+
+        public virtual bool IsMulticellular => false;
+
 
         public Bot(Map map, int energy = 10) : base(map)
         {
@@ -172,6 +175,9 @@ namespace Genesis.Entities
 
         public void GeneAttack(Bot other)
         {
+            if (ReferenceEquals(this, other))
+                throw new ArgumentException("Bot can't do gene attack for himself");
+
             Energy -= ENERGY_TO_GENE_ATTACK;
             if (IsAlive == false)
                 return;
@@ -180,11 +186,11 @@ namespace Genesis.Entities
 
         public void Fight(Bot other)
         {
-            if (IsAlive == false)
-                return;
-
             if (ReferenceEquals(this, other))
                 throw new ArgumentException("Bot can't fight himself");
+
+            if (IsAlive == false)
+                return;
 
             if(Minerals >= other.Minerals)
             {
@@ -233,17 +239,26 @@ namespace Genesis.Entities
             _gene[mutationPos] = newCommand;
         }
 
-        public Bot? Separate()
+        protected void MutateWithChance()
+        {
+            if (Map!.Random.NextSingle() < MUTATION_CHANCE)
+                Mutate();
+        }
+
+        protected Bot? SeparateForcedNotConnected()
         {
             if (IsAlive == false)
                 return null;
 
             Energy -= ENERGY_TO_SEPARATE;
-            if(Energy <= 0)
+            if (Energy <= 0)
             {
                 Kill();
                 return null;
             }
+
+            Bot? newBot = new Bot(this);
+
             Vector2Int? position = Map!.GetEmptyPositionAroundPosition(Position);
             if (position == null)
             {
@@ -251,8 +266,15 @@ namespace Genesis.Entities
                 return null;
             }
 
-            Bot newBot = new Bot(this);
             Map!.AddEntity(position.Value, newBot);
+
+            if (newBot == null)
+            {
+                Kill();
+                return null;
+            }
+
+            newBot.MutateWithChance();
 
             newBot.Energy = Energy / 2;
             Energy -= newBot.Energy;
@@ -262,20 +284,47 @@ namespace Genesis.Entities
 
             newBot.Direction = (BotDirection)Map.Random.Next(BotDirectionExtensions.GetDirectionsCount());
 
-            if(Map.Random.NextSingle() < MUTATION_CHANCE)
-            {
-                newBot.Mutate();
-            }
             return newBot;
         }
 
-        public void Share(Bot other)
+        public Bot? Separate()
         {
             if (IsAlive == false)
-                return;
+                return null;
 
+            Bot? foo = this;
+
+            if (IsMulticellular)
+                return SeparateConnected(ref foo);
+
+            return SeparateForcedNotConnected();
+        }
+
+        public virtual Bot? SeparateConnected(ref Bot thisBot)
+        {
+            thisBot = this;
+            if (IsAlive == false)
+                return null;
+
+            var myPosition = Position;
+            Map map = RemoveFromMap()!;
+
+            MulticellularBot bot = new MulticellularBot(map, this);
+            map.AddEntity(myPosition, bot);
+
+            return bot.SeparateConnected(ref thisBot);
+        }
+
+        
+
+
+        public void Share(Bot other)
+        {
             if (ReferenceEquals(this, other))
                 throw new ArgumentException("Bot can't share with himself");
+
+            if (IsAlive == false)
+                return;
 
             if (Energy >= other.Energy)
             {
@@ -293,11 +342,11 @@ namespace Genesis.Entities
         
         public void GiveQuater(Bot other)
         {
-            if (IsAlive == false)
-                return;
-
             if (ReferenceEquals(this, other))
                 throw new ArgumentException("Bot can't share with himself");
+
+            if (IsAlive == false)
+                return;
 
             int energyToGive = Energy / 4;
             Energy -= energyToGive;

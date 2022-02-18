@@ -129,6 +129,10 @@ namespace Genesis
                 }
 
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             finally
             {
                 writeableBitmap.Unlock();
@@ -183,10 +187,22 @@ namespace Genesis
             _timer.Elapsed += (object? source, ElapsedEventArgs e) =>
             {
                 _timer.Enabled = false;
-                for (int i = 0; i < _speed; i++)
-                    _map.DoIteration();
-                DrawMapInOtherThread();
-                _timer.Enabled = true;
+                try
+                {
+                    for (int i = 0; i < _speed; i++)
+                        _map.DoIteration();
+                    DrawMapInOtherThread();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                finally
+                {
+
+                    _timer.Enabled = true;
+                }
+                
             };
             _timer.Enabled = true;
         }
