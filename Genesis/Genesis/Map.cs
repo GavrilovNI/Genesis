@@ -19,6 +19,20 @@ namespace Genesis
 
     public class Map
     {
+        public Dictionary<Season, float> SeasonToSunDepth = new Dictionary<Season, float>()
+        {
+            { Season.Summer, 0.7f },
+            { Season.Fall, 0.63f },
+            { Season.Spring, 0.63f },
+            { Season.Winter, 0.57f },
+        };
+        public Dictionary<Season, float> SeasonToSunEnergyMupltiplier = new Dictionary<Season, float>()
+        {
+            { Season.Summer, 40 },
+            { Season.Fall, 38 },
+            { Season.Spring, 38 },
+            { Season.Winter, 35 },
+        };
 
         private BidirectionalDictrionary<Vector2Int, Entity> _entities;
         private BidirectionalDictrionary<Vector2Int, Bot> _bots;
@@ -166,30 +180,13 @@ namespace Genesis
             if (position.Y < 0)
                 return 0;
 
-            int one = (int)(0.0625 * Size.Y);
-            int count;
-            switch(Season)
-            {
-                case Season.Winter:
-                    count = 9;
-                    break;
-                case Season.Spring:
-                case Season.Fall:
-                    count = 10;
-                    break;
-                case Season.Summer:
-                    count = 11;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            int maxDepth = one * count;
+            float maxDepth = SeasonToSunDepth[Season] * Size.Y;
 
             if (position.Y > maxDepth)
                 return 0;
 
-            int result = (int)((1f - 1f * position.Y / maxDepth) * count);
+            float sunEnergyMupltiplier = SeasonToSunEnergyMupltiplier[Season];
+            int result = (int)MathF.Ceiling((1f - position.Y / maxDepth) * sunEnergyMupltiplier);
 
             return result;
         }

@@ -11,11 +11,11 @@ namespace Genesis.Entities
     public class Bot : Entity
     {
         public const int GENE_SIZE = 64;
-        public const int FIGHT_BONUS = 100;
+        public const int FIGHT_BONUS = 70;
         public const int ENERGY_TO_SEPARATE = 150;
         public const int ENERGY_TO_GENE_ATTACK = 100;
-        public const int MAX_MINERALS_TO_COVERT = 50;
-        public const int MINERAL_TO_ENERGY_MULTIPLIER = 4;
+        public const int MAX_MINERALS_TO_COVERT = 100;
+        public const int MINERAL_TO_ENERGY_MULTIPLIER = 3;
         public const int ENERGY_FOR_ONE_ITERATION = 3;
         public const float MUTATION_CHANCE = 0.25f;
         public const int MAX_COMMANDS_IN_ITERATION = 15;
@@ -30,7 +30,7 @@ namespace Genesis.Entities
 
 
         public int MaxEnergy => 1000;
-        public int MaxMinerals => 1000;
+        public int MaxMinerals => 300;
 
         public virtual int Energy
         {
