@@ -19,7 +19,9 @@ namespace Genesis
 
     public class Map
     {
+
         private BidirectionalDictrionary<Vector2Int, Entity> _entities;
+        private BidirectionalDictrionary<Vector2Int, Bot> _bots;
 
         public Vector2Int Size { get; private set; }
         public Season Season { get; private set; }
@@ -34,6 +36,7 @@ namespace Genesis
                 throw new ArgumentException(nameof(size) + " must be more than (0; 0).");
 
             _entities = new BidirectionalDictrionary<Vector2Int, Entity>();
+            _bots = new BidirectionalDictrionary<Vector2Int, Bot>();
 
             Size = size;
             Season = Season.Summer;
@@ -53,20 +56,32 @@ namespace Genesis
         {
             position = NormalizePosition(position);
             _entities.Add(position, entity);
+            if(entity is Bot)
+                _bots.Add(position, (Bot)entity);
         }
 
         public void RemoveEnt(Vector2Int position)
         {
             position = NormalizePosition(position);
             if (_entities.ContainsKey(position))
+            {
+                if(_entities[position] is Bot)
+                {
+                    _bots.Remove(position);
+                }
                 _entities.Remove(position);
+            }
             else
                 throw new InvalidOperationException("No entity found in " + nameof(position) + ".");
         }
         public void RemoveEnt(Entity entity)
         {
             if (_entities.Reverse.ContainsKey(entity))
+            {
                 _entities.Reverse.Remove(entity);
+                if(entity is Bot)
+                    _bots.Reverse.Remove((Bot)entity);
+            }
             else
                 throw new InvalidOperationException("Entity not found.");
         }
@@ -78,7 +93,7 @@ namespace Genesis
 
         public void DoIteration()
         {
-            var entities = new BidirectionalDictrionary<Vector2Int, Entity>(_entities);
+            var entities = new BidirectionalDictrionary<Vector2Int, Bot>(_bots);
             int i = 0;
             foreach (var entity in entities)
             {
@@ -110,6 +125,12 @@ namespace Genesis
 
             _entities.Reverse.Remove(entity);
             _entities.Add(position, entity);
+            if(entity is Bot)
+            {
+                Bot bot = (Bot)entity;
+                _bots.Reverse.Remove(bot);
+                _bots.Add(position, bot);
+            }
         }
 
         public Vector2Int NormalizePosition(Vector2Int position)

@@ -126,8 +126,6 @@ namespace Genesis
                         }
 
                         Vector2Int pos = new Vector2Int(entity.Key.X * entitySize.X, entity.Key.Y * entitySize.Y);
-                        if (pos.X < 0)
-                            throw new Exception();
                         DrawSquare(writeableBitmap, pos, entitySize, color);
                         i++;
                     }
